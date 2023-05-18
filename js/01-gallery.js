@@ -1,32 +1,25 @@
-
 import { galleryItems } from "./gallery-items.js";
 
-const gallery = document.querySelector(".gallery");
-galleryItems.forEach(item =>
-    gallery.insertAdjacentHTML("afterbegin",
-    `<li class="gallery__item">
-        <a class="gallery__link" href="${item.original}">
-            <img
-            class= "gallery__image"
-            src="${item.preview}"
-            data-source="${item.original}"
-            alt="${item.description}"
-            />
-        </a>
-    </li>`)
-);
+const galleryList = document.querySelector(".gallery");
 
-gallery.addEventListener("click", (event) => {
-    event.preventDefault()
-    if (event.target.nodeName !== "IMG") {
-        return;
-    }
-    const instance = basicLightbox.create(`
-    <img class="modal" src="${event.target.dataset.source}" width="800" height="600">
-    `);
-    instance.show();
-}
 
-);
+const createGalleryItem = ({ preview, original, description }) => `
+  <li class="gallery__item">
+    <a class="gallery__link" href="${original}" data-original-img=${original}>
+      <img class="gallery__image" src="${preview}" alt="${description}" />
+    </a>
+  </li>
+`;
 
-console.log(galleryItems);
+galleryList.innerHTML = galleryItems.map(createGalleryItem).join("");
+
+const lightbox = new SimpleLightbox(".gallery a", {
+  captions: true,
+  captionDelay: 250,
+});
+
+
+galleryList.addEventListener("click", (event) => {
+  event.preventDefault();
+  lightbox.open();
+});
